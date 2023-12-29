@@ -1,0 +1,18 @@
+with cte as
+    (select customer_id,customer_name
+    , sum(case when year(billing_creation_date) = '2019' then billed_amount else 0 end) as bill_2019_sum
+    , sum(case when year(billing_creation_date) = '2020' then billed_amount else 0 end) as bill_2020_sum
+    , sum(case when year(billing_creation_date)= '2021' then billed_amount else 0 end) as bill_2021_sum
+    , count(case when year(billing_creation_date)= '2019' then billed_amount else null end) as bill_2019_cnt
+    , count(case when year(billing_creation_date)= '2020' then billed_amount else null end) as bill_2020_cnt
+    , count(case when year(billing_creation_date) = '2021' then billed_amount else null end) as bill_2021_cnt
+    from billing
+    group by customer_id,customer_name)
+select customer_id, customer_name
+, round((bill_2019_sum + bill_2020_sum + bill_2021_sum)/
+    (  case when bill_2019_cnt = 0 then 1 else bill_2019_cnt end
+     + case when bill_2020_cnt = 0 then 1 else bill_2020_cnt end
+     + case when bill_2021_cnt = 0 then 1 else bill_2021_cnt end
+    ),2)
+from cte
+order by 1;
