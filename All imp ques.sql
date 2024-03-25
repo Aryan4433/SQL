@@ -128,7 +128,7 @@ update employees set salary = salary*1.1 where salary<77479;
 
 #33 50 % of data 
 
-select * from employees where ID >= (select count(ID)/2 from employees);
+select * from employees where ID <= (select count(ID)/2 from employees);
 
 
 
